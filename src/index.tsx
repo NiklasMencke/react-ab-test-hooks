@@ -1,8 +1,6 @@
 /** @format */
 
 import React, { useEffect, useState } from 'react';
-import styles from './styles.module.css';
-import ls from 'local-storage';
 interface ExperimentProps {
   id: string;
   variants: Array<any>;
@@ -19,43 +17,28 @@ interface VariantProps {
   onResult?: Function;
 }
 
-const getWeightedRandomInt = (spec: any): number => {
-  var i;
-  var j;
-  var table = [];
+const getWeightedRandomInt = (spec: any): string => {
+  let i;
+  let j;
+  const table = [];
   for (i in spec) {
-    // The constant 10 below should be computed based on the
-    // weights in the spec for a correct and optimal table size.
-    // E.g. the spec {0:0.999, 1:0.001} will break this impl.
     for (j = 0; j < spec[i] * 10; j++) {
       table.push(i);
     }
   }
-  return Number(table[Math.floor(Math.random() * table.length)]);
+  return table[Math.floor(Math.random() * table.length)];
 };
 
-const getVariantFromStorage = (experimentId: string): number | null => {
+const getVariantFromStorage = (experimentId: string): string | null => {
   try {
     if (experimentId?.length > 0) {
-      const persistedVariant: number = Number(ls.get(`experiment_result_${experimentId}`));
-      return persistedVariant;
+      return localStorage?.getItem(`experiment_result_${experimentId}`);
     }
     throw new Error('experimentId cant be empty');
   } catch (err) {
     return null;
   }
 };
-
-// const getVariant = () => {
-//   const existingVariant = ls.get('random_variant');
-//   if (!existingVariant) {
-//     const randomInt = getRandomInt(2);
-//     ls.set('random_variant', randomInt);
-//     return randomInt === 0 ? 'A' : 'B';
-//   } else {
-//     return existingVariant === 0 ? 'A' : 'B';
-//   }
-// };
 
 const useVariant = ({
   experimentId,
@@ -67,7 +50,7 @@ const useVariant = ({
   Variant: React.FC;
   error: string | null;
 } => {
-  const [variant, setVariant] = useState<number | null>(
+  const [variant, setVariant] = useState<string | null>(
     persistResult ? getVariantFromStorage(experimentId) : null,
   );
   const [error, setError] = useState<string | null>(null);
@@ -100,13 +83,13 @@ const useVariant = ({
         setError(err.message);
       }
     }
-  }, [experimentId, variants, error, variant, weights]);
+  }, [variants, error, variant, weights]);
 
   useEffect(() => {
-    if (variant && persistResult) {
-      // persist variant result
+    if (variant && persistResult && experimentId?.length > 0) {
+      localStorage.setItem(`experiment_result_${experimentId}`, variant);
     }
-  }, [persistResult, variant]);
+  }, [experimentId, persistResult, variant]);
 
   useEffect(() => {
     if (variant && onResult) {
@@ -144,7 +127,7 @@ export const ExampleComponent = () => {
     variants: [<div key='1'>Test1</div>, <div key='2'>Test2</div>],
   });
   return (
-    <div className={styles.test}>
+    <div>
       <Variant />
     </div>
   );
