@@ -2,17 +2,21 @@
 
 import React, { useEffect, useState } from 'react';
 import styles from './styles.module.css';
-// import ls from 'local-storage';
+import ls from 'local-storage';
 interface ExperimentProps {
   id: string;
   variants: Array<any>;
   weights?: Array<number>;
+  persistResult?: boolean;
+  onResult?: Function;
 }
 
 interface VariantProps {
   experimentId: string;
   variants: Array<any>;
   weights?: Array<number>;
+  persistResult?: boolean;
+  onResult?: Function;
 }
 
 const getWeightedRandomInt = (spec: any): number => {
@@ -30,6 +34,18 @@ const getWeightedRandomInt = (spec: any): number => {
   return Number(table[Math.floor(Math.random() * table.length)]);
 };
 
+const getVariantFromStorage = (experimentId: string): number | null => {
+  try {
+    if (experimentId?.length > 0) {
+      const persistedVariant: number = Number(ls.get(`experiment_result_${experimentId}`));
+      return persistedVariant;
+    }
+    throw new Error('experimentId cant be empty');
+  } catch (err) {
+    return null;
+  }
+};
+
 // const getVariant = () => {
 //   const existingVariant = ls.get('random_variant');
 //   if (!existingVariant) {
@@ -45,11 +61,15 @@ const useVariant = ({
   experimentId,
   variants,
   weights,
+  persistResult = false,
+  onResult,
 }: VariantProps): {
   Variant: React.FC;
   error: string | null;
 } => {
-  const [variant, setVariant] = useState<number | null>(null);
+  const [variant, setVariant] = useState<number | null>(
+    persistResult ? getVariantFromStorage(experimentId) : null,
+  );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -77,9 +97,22 @@ const useVariant = ({
         setVariant(randomVariant);
       } catch (err) {
         console.log(err);
+        setError(err.message);
       }
     }
   }, [experimentId, variants, error, variant, weights]);
+
+  useEffect(() => {
+    if (variant && persistResult) {
+      // persist variant result
+    }
+  }, [persistResult, variant]);
+
+  useEffect(() => {
+    if (variant && onResult) {
+      onResult();
+    }
+  }, [onResult, variant]);
 
   return {
     error,
@@ -93,8 +126,14 @@ const useVariant = ({
   };
 };
 
-export const useExperiment = ({ id, variants, weights }: ExperimentProps) => {
-  const { Variant } = useVariant({ experimentId: id, variants, weights });
+export const useExperiment = ({
+  id,
+  variants,
+  weights,
+  persistResult,
+  onResult,
+}: ExperimentProps) => {
+  const { Variant } = useVariant({ experimentId: id, variants, weights, persistResult, onResult });
 
   return { Variant };
 };
