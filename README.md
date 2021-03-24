@@ -1,13 +1,13 @@
-# react-ab-testing-hooks
+# react-ab-test-hooks
 
 > A simple, fast and lightweight AB-Testing library for React and Next.js
 
-[![NPM](https://img.shields.io/npm/v/react-ab-testing-hooks.svg)](https://www.npmjs.com/package/react-ab-testing-hooks) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/react-ab-test-hooks.svg)](https://www.npmjs.com/package/react-ab-test-hooks) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 ## Install
 
 ```bash
-npm install --save react-ab-testing-hooks
+npm install --save react-ab-test-hooks
 ```
 
 ## Usage
@@ -15,8 +15,8 @@ npm install --save react-ab-testing-hooks
 ```tsx
 import React, { Component } from 'react'
 
-import MyComponent from 'react-ab-testing-hooks'
-import 'react-ab-testing-hooks/dist/index.css'
+import MyComponent from 'react-ab-test-hooks'
+import 'react-ab-test-hooks/dist/index.css'
 
 class Example extends Component {
   render() {
