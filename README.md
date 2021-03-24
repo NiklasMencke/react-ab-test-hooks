@@ -52,7 +52,7 @@ export const SimpleExample = () => {
 }
 ```
 
-## Generate Variant Wrapper Components (+ Result Caching)
+## Generate variant wrapper components (+ result caching)
 
 It's also possible to retrieve wrappers (as functional components) for each variant provided. In contrary to above example this would mean that in any case you will receive a wrapper for each variant and only the winning variant will actually render it's children. This can be convinient if you wanna render a more complex UI based on the experiment result. You can extract the Wrapper Components via array destructering.
 
