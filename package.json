@@ -1,7 +1,7 @@
 {
   "name": "react-ab-test-hooks",
   "version": "1.0.0",
-  "description": "A simple, fast and lightweight AB-Testing library for React and Next.js",
+  "description": "A fast and lightweight functional AB-Testing library for React and Next.js based on Hooks",
   "author": "NiklasMencke",
   "license": "MIT",
   "repository": "NiklasMencke/react-ab-test-hooks",

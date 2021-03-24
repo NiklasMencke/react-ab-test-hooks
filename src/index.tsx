@@ -14,8 +14,8 @@ interface VariantWrapper {
 interface ExperimentBaseProps {
   id: string;
   weights?: Array<number>;
-  persistResult?: boolean;
-  onResult?: Function;
+  cacheResult?: boolean;
+  onResult?: (experimentId: string, selectedVariant: Variant | VariantWrapper) => void | null;
 }
 
 interface UseExperimentProps extends ExperimentBaseProps {
@@ -29,6 +29,18 @@ interface UseExperimentWrapperProps extends ExperimentBaseProps {
 interface UseVariantProps extends ExperimentBaseProps {
   variants: Array<Variant | VariantWrapper>;
   type: 'standard' | 'wrapper';
+}
+
+interface UseExperimentWrapperResponse {
+  wrappers: Array<React.FC>;
+  onResult?: (experimentId: string, selectedVariantId: VariantWrapper) => void | null;
+  error?: string | null;
+}
+
+interface UseExperimentResponse {
+  SelectedVariant: React.FC;
+  onResult?: (experimentId: string, selectedVariant: Variant) => void | null;
+  error?: string | null;
 }
 
 const getWeightedRandomInt = (spec: any): number => {
@@ -58,15 +70,15 @@ const useVariant = ({
   id,
   variants,
   weights,
-  persistResult = false,
+  cacheResult = false,
   onResult,
 }: UseVariantProps): {
   Variant: React.FC;
-  Wrappers: Array<React.FC>;
+  wrappers: Array<React.FC>;
   error: string | null;
 } => {
-  const [resultIndex, setResultIndex] = useState<number | null>(
-    persistResult ? Number(getVariantFromStorage(id)) : null,
+  const [resultIndex, setResultIndex] = useState<number>(
+    cacheResult ? (Number(getVariantFromStorage(id)) ? Number(getVariantFromStorage(id)) : -1) : -1,
   );
   const [error, setError] = useState<string | null>(null);
 
@@ -79,7 +91,7 @@ const useVariant = ({
       setError(
         'Please make sure to provide at least two variants. If you specify custom weights, you need to do so for each variant.',
       );
-    } else if (!resultIndex) {
+    } else if (resultIndex < 0) {
       try {
         const randomVariant = getWeightedRandomInt(
           variants.reduce((prev, _, crrIndex) => {
@@ -101,16 +113,16 @@ const useVariant = ({
   }, [variants, error, resultIndex, weights]);
 
   useEffect(() => {
-    if (resultIndex && persistResult && id?.length > 0) {
+    if (resultIndex >= 0 && cacheResult && id?.length > 0) {
       localStorage.setItem(`experiment_result_${id}`, resultIndex.toString());
     }
-  }, [id, persistResult, resultIndex]);
+  }, [id, cacheResult, resultIndex]);
 
   useEffect(() => {
-    if (typeof resultIndex !== undefined && onResult && variants) {
-      onResult(variants[resultIndex!]);
+    if (id && resultIndex >= 0 && onResult && variants) {
+      onResult(id, variants[resultIndex!]);
     }
-  }, [onResult, variants, resultIndex]);
+  }, [onResult, id, variants, resultIndex]);
 
   return {
     error,
@@ -118,7 +130,7 @@ const useVariant = ({
       if (
         type === 'standard' &&
         variants &&
-        typeof resultIndex !== undefined &&
+        resultIndex >= 0 &&
         variants.length - 1 >= resultIndex!
       ) {
         const result = variants[resultIndex!] as Variant;
@@ -127,7 +139,16 @@ const useVariant = ({
         return <React.Fragment />;
       }
     },
-    Wrappers: [({ children }) => <React.Fragment key='1'>{children}</React.Fragment>],
+    wrappers:
+      type === 'wrapper' && variants
+        ? variants.map((variant, i) => {
+            if (i === resultIndex) {
+              return ({ children }) => <React.Fragment key={variant.id}>{children}</React.Fragment>;
+            } else {
+              return () => <React.Fragment key={variant.id} />;
+            }
+          })
+        : [],
   };
 };
 
@@ -135,51 +156,36 @@ export const useExperiment = ({
   id,
   variants,
   weights,
-  persistResult,
+  cacheResult,
   onResult,
-}: UseExperimentProps) => {
-  const { Variant } = useVariant({
+}: UseExperimentProps): UseExperimentResponse => {
+  const { Variant, error } = useVariant({
     type: 'standard',
     id,
     variants,
     weights,
-    persistResult,
+    cacheResult,
     onResult,
   });
 
-  return { Variant };
+  return { SelectedVariant: Variant, onResult, error };
 };
 
 export const useExperimentWrappers = ({
   id,
   variants,
   weights,
-  persistResult,
+  cacheResult,
   onResult,
-}: UseExperimentWrapperProps) => {
-  const { Variant } = useVariant({
+}: UseExperimentWrapperProps): UseExperimentWrapperResponse => {
+  const { wrappers, error } = useVariant({
     type: 'wrapper',
     id,
     variants,
     weights,
-    persistResult,
+    cacheResult,
     onResult,
   });
 
-  return { Variant };
-};
-
-export const ExampleComponent = () => {
-  const { Variant } = useExperiment({
-    id: 'test',
-    variants: [
-      { id: 'A', element: <div key='1'>Test1</div> },
-      { id: 'B', element: <div key='2'>Test2</div> },
-    ],
-  });
-  return (
-    <div>
-      <Variant />
-    </div>
-  );
+  return { wrappers, onResult, error };
 };
