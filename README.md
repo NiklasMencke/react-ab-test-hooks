@@ -155,6 +155,10 @@ export const ErrorExample = () => {
 }
 ```
 
+## Support
+
+If you like this library it would be amazing if you could star it here on GitHub. :)
+
 ## License
 
 MIT © [NiklasMencke](https://github.com/NiklasMencke)
