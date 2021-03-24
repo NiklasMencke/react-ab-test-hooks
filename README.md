@@ -153,7 +153,7 @@ export const ErrorExample = () => {
 
 ## Support
 
-If you like this library it would be amazing if you could star it here on GitHub. :)
+If you like this library it would be amazing if you would give it a star :)
 
 ## License
 
