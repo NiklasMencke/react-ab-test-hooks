@@ -1,19 +1,6 @@
-
-<a name="readmemd"></a>
-
-react-ab-test-hooks / [Exports](#modulesmd)
-
-<a name="readmemd"></a>
-
-react-ab-test-hooks / [Exports](#modulesmd)
-
-<a name="readmemd"></a>
-
-react-ab-test-hooks / [Exports](#modulesmd)
-
 # react-ab-test-hooks
 
-> A fast and lightweight AB-Testing library for React and Next.js based on hooks and functional components
+> A fast and lightweight AB-Testing library for React and Next.js based on hooks and functional components. Full Typescript support and result caching is possible.
 
 [![NPM](https://img.shields.io/npm/v/react-ab-test-hooks.svg)](https://www.npmjs.com/package/react-ab-test-hooks) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
@@ -30,6 +17,14 @@ npm install --save react-ab-test-hooks
 ```
 
 ## Basic Usage
+
+A simple usage example for an AB-Test would be to pass each respective React Element/Component directly in the Experiment's variants. The experiment hook will then chose a winner and return it as Variant, which can then be used in your UI.
+
+Per default the result is not cached, meaning on every new page load, the experiment is run again. You can enable caching by passing: `cacheResult: true`.
+
+Per default the weight distribution is equal among all variants provided in the experiment. If you wan't to provide a custom probability distribution, you can do so via `weights: [0.3, 0.7]`.
+
+See further examples for more options.
 
 ```tsx
 import React from 'react'
@@ -60,6 +55,10 @@ export const SimpleExample = () => {
 
 ## Generate Variant Wrapper Components (+ Result Caching)
 
+It's also possible to retrieve wrappers (as functional components) for each variant provided. In contrary to above example this would mean that in any case you will receive a wrapper for each variant and only the winning variant will actually render it's children. This can be convinient if you wanna render a more complex UI based on the experiment result. You can extract the Wrapper Components via array destructering.
+
+NOTE: Only the children of the winning variant wrapper are rendered!
+
 ```tsx
 import React from 'react'
 
@@ -68,10 +67,10 @@ import 'react-ab-testing/dist/index.css'
 
 export const WrapperExample = () => {
   const {
-    wrappers: [VariantA, VariantB, VariantC]
+    wrappers: [VariantA, VariantB, VariantC] // Extract the wrapper components here
   } = useExperimentWrappers({
     id: 'experiment-2',
-    variants: [{ id: 'A' }, { id: 'B' }, { id: 'C' }],
+    variants: [{ id: 'A' }, { id: 'B' }, { id: 'C' }], // more than 2 variants are possible
     cacheResult: true,
     onResult: (experimentId, selectedVariant) =>
       console.log(
@@ -104,7 +103,7 @@ export const CustomWeightsExample = () => {
       { id: 'A', element: <div>Variant A won</div> },
       { id: 'B', element: <div>Variant B won</div> }
     ],
-    weights: [0.3, 0.7], // even distribution per default
+    weights: [0.3, 0.7], // Has to add up to 1.0 and has to have the same length as the variant array
     cacheResult: false,
     onResult: (experimentId, selectedVariant) =>
       console.log(
@@ -160,8 +159,11 @@ export const ErrorExample = () => {
 
 MIT © [NiklasMencke](https://github.com/NiklasMencke)
 
-# Interfaces
+## API Documentation
 
+Find the detailed API documentation attached.
+
+# Interfaces
 
 <a name="interfacesuseexperimentpropsmd"></a>
 
@@ -171,7 +173,7 @@ MIT © [NiklasMencke](https://github.com/NiklasMencke)
 
 ### Hierarchy
 
-* *ExperimentBaseProps*
+- _ExperimentBaseProps_
 
   ↳ **UseExperimentProps**
 
@@ -189,7 +191,7 @@ MIT © [NiklasMencke](https://github.com/NiklasMencke)
 
 #### cacheResult
 
-• `Optional` **cacheResult**: *boolean*
+• `Optional` **cacheResult**: _boolean_
 
 Optional: Boolean that indicates if the experiment result should be cached to the browsers local storage. This will ensure, that once an experiment is finished, the user will always sees the same variant. Example: true
 
@@ -197,11 +199,11 @@ Inherited from: void
 
 Defined in: [index.tsx:23](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L23)
 
-___
+---
 
 #### id
 
-• **id**: *string*
+• **id**: _string_
 
 Experiment ID. Example: 'experiment-1'
 
@@ -209,26 +211,26 @@ Inherited from: void
 
 Defined in: [index.tsx:19](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L19)
 
-___
+---
 
 #### onResult
 
-• `Optional` **onResult**: (`experimentId`: *string*, `selectedVariant`: [*Variant*](#interfacesvariantmd) \| [*VariantWrapper*](#interfacesvariantwrappermd)) => *null* \| *void*
+• `Optional` **onResult**: (`experimentId`: _string_, `selectedVariant`: [_Variant_](#interfacesvariantmd) \| [_VariantWrapper_](#interfacesvariantwrappermd)) => _null_ \| _void_
 
 Optional: Callback function that is called when the experiment has been finished and a variant was selected.
 
 ##### Type declaration:
 
-▸ (`experimentId`: *string*, `selectedVariant`: [*Variant*](#interfacesvariantmd) \| [*VariantWrapper*](#interfacesvariantwrappermd)): *null* \| *void*
+▸ (`experimentId`: _string_, `selectedVariant`: [_Variant_](#interfacesvariantmd) \| [_VariantWrapper_](#interfacesvariantwrappermd)): _null_ \| _void_
 
 ##### Parameters:
 
-Name | Type |
-:------ | :------ |
-`experimentId` | *string* |
-`selectedVariant` | [*Variant*](#interfacesvariantmd) \| [*VariantWrapper*](#interfacesvariantwrappermd) |
+| Name              | Type                                                                                 |
+| :---------------- | :----------------------------------------------------------------------------------- |
+| `experimentId`    | _string_                                                                             |
+| `selectedVariant` | [_Variant_](#interfacesvariantmd) \| [_VariantWrapper_](#interfacesvariantwrappermd) |
 
-**Returns:** *null* \| *void*
+**Returns:** _null_ \| _void_
 
 Defined in: [index.tsx:25](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L25)
 
@@ -236,28 +238,27 @@ Inherited from: void
 
 Defined in: [index.tsx:25](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L25)
 
-___
+---
 
 #### variants
 
-• **variants**: [*Variant*](#interfacesvariantmd)[]
+• **variants**: [_Variant_](#interfacesvariantmd)[]
 
 An array of variants. Has to contain at least two items
 
 Defined in: [index.tsx:30](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L30)
 
-___
+---
 
 #### weights
 
-• `Optional` **weights**: *number*[]
+• `Optional` **weights**: _number_[]
 
 Optional: Weight distribution as a number array. Has to match the length of the variant array. Defaults to equal distribution. E.g. [0.5, 0.5]
 
 Inherited from: void
 
 Defined in: [index.tsx:21](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L21)
-
 
 <a name="interfacesuseexperimentresponsemd"></a>
 
@@ -277,47 +278,46 @@ Defined in: [index.tsx:21](https://github.com/NiklasMencke/react-ab-testing/blob
 
 #### SelectedVariant
 
-• **SelectedVariant**: *FC*<{}\>
+• **SelectedVariant**: _FC_<{}\>
 
 The selected variant that won the experiment and was chosen from the previously passed variants.
 
 Defined in: [index.tsx:56](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L56)
 
-___
+---
 
 #### error
 
-• `Optional` **error**: *null* \| *string*
+• `Optional` **error**: _null_ \| _string_
 
 Error string that is filled in case something breaks
 
 Defined in: [index.tsx:60](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L60)
 
-___
+---
 
 #### onResult
 
-• `Optional` **onResult**: (`experimentId`: *string*, `selectedVariant`: [*Variant*](#interfacesvariantmd)) => *null* \| *void*
+• `Optional` **onResult**: (`experimentId`: _string_, `selectedVariant`: [_Variant_](#interfacesvariantmd)) => _null_ \| _void_
 
 Callback function that is called when the experiment has been finished and a variant was selected.
 
 ##### Type declaration:
 
-▸ (`experimentId`: *string*, `selectedVariant`: [*Variant*](#interfacesvariantmd)): *null* \| *void*
+▸ (`experimentId`: _string_, `selectedVariant`: [_Variant_](#interfacesvariantmd)): _null_ \| _void_
 
 ##### Parameters:
 
-Name | Type |
-:------ | :------ |
-`experimentId` | *string* |
-`selectedVariant` | [*Variant*](#interfacesvariantmd) |
+| Name              | Type                              |
+| :---------------- | :-------------------------------- |
+| `experimentId`    | _string_                          |
+| `selectedVariant` | [_Variant_](#interfacesvariantmd) |
 
-**Returns:** *null* \| *void*
-
-Defined in: [index.tsx:58](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L58)
+**Returns:** _null_ \| _void_
 
 Defined in: [index.tsx:58](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L58)
 
+Defined in: [index.tsx:58](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L58)
 
 <a name="interfacesuseexperimentwrapperpropsmd"></a>
 
@@ -327,7 +327,7 @@ Defined in: [index.tsx:58](https://github.com/NiklasMencke/react-ab-testing/blob
 
 ### Hierarchy
 
-* *ExperimentBaseProps*
+- _ExperimentBaseProps_
 
   ↳ **UseExperimentWrapperProps**
 
@@ -345,7 +345,7 @@ Defined in: [index.tsx:58](https://github.com/NiklasMencke/react-ab-testing/blob
 
 #### cacheResult
 
-• `Optional` **cacheResult**: *boolean*
+• `Optional` **cacheResult**: _boolean_
 
 Optional: Boolean that indicates if the experiment result should be cached to the browsers local storage. This will ensure, that once an experiment is finished, the user will always sees the same variant. Example: true
 
@@ -353,11 +353,11 @@ Inherited from: void
 
 Defined in: [index.tsx:23](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L23)
 
-___
+---
 
 #### id
 
-• **id**: *string*
+• **id**: _string_
 
 Experiment ID. Example: 'experiment-1'
 
@@ -365,26 +365,26 @@ Inherited from: void
 
 Defined in: [index.tsx:19](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L19)
 
-___
+---
 
 #### onResult
 
-• `Optional` **onResult**: (`experimentId`: *string*, `selectedVariant`: [*Variant*](#interfacesvariantmd) \| [*VariantWrapper*](#interfacesvariantwrappermd)) => *null* \| *void*
+• `Optional` **onResult**: (`experimentId`: _string_, `selectedVariant`: [_Variant_](#interfacesvariantmd) \| [_VariantWrapper_](#interfacesvariantwrappermd)) => _null_ \| _void_
 
 Optional: Callback function that is called when the experiment has been finished and a variant was selected.
 
 ##### Type declaration:
 
-▸ (`experimentId`: *string*, `selectedVariant`: [*Variant*](#interfacesvariantmd) \| [*VariantWrapper*](#interfacesvariantwrappermd)): *null* \| *void*
+▸ (`experimentId`: _string_, `selectedVariant`: [_Variant_](#interfacesvariantmd) \| [_VariantWrapper_](#interfacesvariantwrappermd)): _null_ \| _void_
 
 ##### Parameters:
 
-Name | Type |
-:------ | :------ |
-`experimentId` | *string* |
-`selectedVariant` | [*Variant*](#interfacesvariantmd) \| [*VariantWrapper*](#interfacesvariantwrappermd) |
+| Name              | Type                                                                                 |
+| :---------------- | :----------------------------------------------------------------------------------- |
+| `experimentId`    | _string_                                                                             |
+| `selectedVariant` | [_Variant_](#interfacesvariantmd) \| [_VariantWrapper_](#interfacesvariantwrappermd) |
 
-**Returns:** *null* \| *void*
+**Returns:** _null_ \| _void_
 
 Defined in: [index.tsx:25](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L25)
 
@@ -392,28 +392,27 @@ Inherited from: void
 
 Defined in: [index.tsx:25](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L25)
 
-___
+---
 
 #### variants
 
-• **variants**: [*VariantWrapper*](#interfacesvariantwrappermd)[]
+• **variants**: [_VariantWrapper_](#interfacesvariantwrappermd)[]
 
 An array of variants. Has to contain at least two items. The element attribute is left out here.
 
 Defined in: [index.tsx:35](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L35)
 
-___
+---
 
 #### weights
 
-• `Optional` **weights**: *number*[]
+• `Optional` **weights**: _number_[]
 
 Optional: Weight distribution as a number array. Has to match the length of the variant array. Defaults to equal distribution. E.g. [0.5, 0.5]
 
 Inherited from: void
 
 Defined in: [index.tsx:21](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L21)
-
 
 <a name="interfacesuseexperimentwrapperresponsemd"></a>
 
@@ -433,47 +432,46 @@ Defined in: [index.tsx:21](https://github.com/NiklasMencke/react-ab-testing/blob
 
 #### error
 
-• `Optional` **error**: *null* \| *string*
+• `Optional` **error**: _null_ \| _string_
 
 Error string that is filled in case something breaks
 
 Defined in: [index.tsx:51](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L51)
 
-___
+---
 
 #### onResult
 
-• `Optional` **onResult**: (`experimentId`: *string*, `selectedVariantId`: [*VariantWrapper*](#interfacesvariantwrappermd)) => *null* \| *void*
+• `Optional` **onResult**: (`experimentId`: _string_, `selectedVariantId`: [_VariantWrapper_](#interfacesvariantwrappermd)) => _null_ \| _void_
 
 Callback function that is called when the experiment has been finished and a variant was selected.
 
 ##### Type declaration:
 
-▸ (`experimentId`: *string*, `selectedVariantId`: [*VariantWrapper*](#interfacesvariantwrappermd)): *null* \| *void*
+▸ (`experimentId`: _string_, `selectedVariantId`: [_VariantWrapper_](#interfacesvariantwrappermd)): _null_ \| _void_
 
 ##### Parameters:
 
-Name | Type |
-:------ | :------ |
-`experimentId` | *string* |
-`selectedVariantId` | [*VariantWrapper*](#interfacesvariantwrappermd) |
+| Name                | Type                                            |
+| :------------------ | :---------------------------------------------- |
+| `experimentId`      | _string_                                        |
+| `selectedVariantId` | [_VariantWrapper_](#interfacesvariantwrappermd) |
 
-**Returns:** *null* \| *void*
-
-Defined in: [index.tsx:49](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L49)
+**Returns:** _null_ \| _void_
 
 Defined in: [index.tsx:49](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L49)
 
-___
+Defined in: [index.tsx:49](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L49)
+
+---
 
 #### wrappers
 
-• **wrappers**: *FC*<{}\>[]
+• **wrappers**: _FC_<{}\>[]
 
 An array containing a wrapper component for each of the previously passed variants. Only the Variant Wrapper that won will render it's children.
 
 Defined in: [index.tsx:47](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L47)
-
 
 <a name="interfacesusevariantpropsmd"></a>
 
@@ -483,7 +481,7 @@ Defined in: [index.tsx:47](https://github.com/NiklasMencke/react-ab-testing/blob
 
 ### Hierarchy
 
-* *ExperimentBaseProps*
+- _ExperimentBaseProps_
 
   ↳ **UseVariantProps**
 
@@ -502,7 +500,7 @@ Defined in: [index.tsx:47](https://github.com/NiklasMencke/react-ab-testing/blob
 
 #### cacheResult
 
-• `Optional` **cacheResult**: *boolean*
+• `Optional` **cacheResult**: _boolean_
 
 Optional: Boolean that indicates if the experiment result should be cached to the browsers local storage. This will ensure, that once an experiment is finished, the user will always sees the same variant. Example: true
 
@@ -510,11 +508,11 @@ Inherited from: void
 
 Defined in: [index.tsx:23](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L23)
 
-___
+---
 
 #### id
 
-• **id**: *string*
+• **id**: _string_
 
 Experiment ID. Example: 'experiment-1'
 
@@ -522,26 +520,26 @@ Inherited from: void
 
 Defined in: [index.tsx:19](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L19)
 
-___
+---
 
 #### onResult
 
-• `Optional` **onResult**: (`experimentId`: *string*, `selectedVariant`: [*Variant*](#interfacesvariantmd) \| [*VariantWrapper*](#interfacesvariantwrappermd)) => *null* \| *void*
+• `Optional` **onResult**: (`experimentId`: _string_, `selectedVariant`: [_Variant_](#interfacesvariantmd) \| [_VariantWrapper_](#interfacesvariantwrappermd)) => _null_ \| _void_
 
 Optional: Callback function that is called when the experiment has been finished and a variant was selected.
 
 ##### Type declaration:
 
-▸ (`experimentId`: *string*, `selectedVariant`: [*Variant*](#interfacesvariantmd) \| [*VariantWrapper*](#interfacesvariantwrappermd)): *null* \| *void*
+▸ (`experimentId`: _string_, `selectedVariant`: [_Variant_](#interfacesvariantmd) \| [_VariantWrapper_](#interfacesvariantwrappermd)): _null_ \| _void_
 
 ##### Parameters:
 
-Name | Type |
-:------ | :------ |
-`experimentId` | *string* |
-`selectedVariant` | [*Variant*](#interfacesvariantmd) \| [*VariantWrapper*](#interfacesvariantwrappermd) |
+| Name              | Type                                                                                 |
+| :---------------- | :----------------------------------------------------------------------------------- |
+| `experimentId`    | _string_                                                                             |
+| `selectedVariant` | [_Variant_](#interfacesvariantmd) \| [_VariantWrapper_](#interfacesvariantwrappermd) |
 
-**Returns:** *null* \| *void*
+**Returns:** _null_ \| _void_
 
 Defined in: [index.tsx:25](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L25)
 
@@ -549,38 +547,37 @@ Inherited from: void
 
 Defined in: [index.tsx:25](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L25)
 
-___
+---
 
 #### type
 
-• **type**: *standard* \| *wrapper*
+• **type**: _standard_ \| _wrapper_
 
 The type of variant. 'wrapper' will result in returning wrapper components for each variant of the experiment. Example: 'standard'
 
 Defined in: [index.tsx:42](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L42)
 
-___
+---
 
 #### variants
 
-• **variants**: ([*Variant*](#interfacesvariantmd) \| [*VariantWrapper*](#interfacesvariantwrappermd))[]
+• **variants**: ([_Variant_](#interfacesvariantmd) \| [_VariantWrapper_](#interfacesvariantwrappermd))[]
 
 An array of variants
 
 Defined in: [index.tsx:40](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L40)
 
-___
+---
 
 #### weights
 
-• `Optional` **weights**: *number*[]
+• `Optional` **weights**: _number_[]
 
 Optional: Weight distribution as a number array. Has to match the length of the variant array. Defaults to equal distribution. E.g. [0.5, 0.5]
 
 Inherited from: void
 
 Defined in: [index.tsx:21](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L21)
-
 
 <a name="interfacesvariantmd"></a>
 
@@ -599,22 +596,21 @@ Defined in: [index.tsx:21](https://github.com/NiklasMencke/react-ab-testing/blob
 
 #### element
 
-• **element**: *any*
+• **element**: _any_
 
 React Node to render if this variant succeeds. Can be a React Component or HTML. Example: <div>Variant A</div>
 
 Defined in: [index.tsx:9](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L9)
 
-___
+---
 
 #### id
 
-• **id**: *string*
+• **id**: _string_
 
 Variant ID. Example: 'variant-a'
 
 Defined in: [index.tsx:7](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L7)
-
 
 <a name="interfacesvariantwrappermd"></a>
 
@@ -632,12 +628,11 @@ Defined in: [index.tsx:7](https://github.com/NiklasMencke/react-ab-testing/blob/
 
 #### id
 
-• **id**: *string*
+• **id**: _string_
 
 Variant ID. Example: 'variant-a'
 
 Defined in: [index.tsx:14](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L14)
-
 
 <a name="modulesmd"></a>
 
@@ -666,7 +661,7 @@ Defined in: [index.tsx:14](https://github.com/NiklasMencke/react-ab-testing/blob
 
 ### useExperiment
 
-▸ `Const`**useExperiment**(`__namedParameters`: [*UseExperimentProps*](#interfacesuseexperimentpropsmd)): [*UseExperimentResponse*](#interfacesuseexperimentresponsemd)
+▸ `Const`**useExperiment**(`__namedParameters`: [_UseExperimentProps_](#interfacesuseexperimentpropsmd)): [_UseExperimentResponse_](#interfacesuseexperimentresponsemd)
 
 A hook that takes an AB-Test experiment configuration and choses a variant that won the experiment based on a probability distribution.
 The probably distribution can be defined in the weights array (e.g [0.1, 0.9]). It defaults to an even distribution.
@@ -674,21 +669,21 @@ it will return the variant (as a React Element) that won the given experiment.
 
 #### Parameters:
 
-Name | Type |
-:------ | :------ |
-`__namedParameters` | [*UseExperimentProps*](#interfacesuseexperimentpropsmd) |
+| Name                | Type                                                    |
+| :------------------ | :------------------------------------------------------ |
+| `__namedParameters` | [_UseExperimentProps_](#interfacesuseexperimentpropsmd) |
 
-**Returns:** [*UseExperimentResponse*](#interfacesuseexperimentresponsemd)
+**Returns:** [_UseExperimentResponse_](#interfacesuseexperimentresponsemd)
 
 The Variant component that won the experiment.
 
 Defined in: [index.tsx:194](https://github.com/NiklasMencke/react-ab-testing/blob/9d3c239/src/index.tsx#L194)
 
-___
+---
 
 ### useExperimentWrappers
 
-▸ `Const`**useExperimentWrappers**(`__namedParameters`: [*UseExperimentWrapperProps*](#interfacesuseexperimentwrapperpropsmd)): [*UseExperimentWrapperResponse*](#interfacesuseexperimentwrapperresponsemd)
+▸ `Const`**useExperimentWrappers**(`__namedParameters`: [_UseExperimentWrapperProps_](#interfacesuseexperimentwrapperpropsmd)): [_UseExperimentWrapperResponse_](#interfacesuseexperimentwrapperresponsemd)
 
 A hook that takes an AB-Test experiment configuration and choses a variant that won the experiment based on a probability distribution.
 The probably distribution can be defined in the weights array (e.g [0.1, 0.9]). It defaults to an even distribution.
@@ -697,11 +692,11 @@ experiment will display its children.
 
 #### Parameters:
 
-Name | Type |
-:------ | :------ |
-`__namedParameters` | [*UseExperimentWrapperProps*](#interfacesuseexperimentwrapperpropsmd) |
+| Name                | Type                                                                  |
+| :------------------ | :-------------------------------------------------------------------- |
+| `__namedParameters` | [_UseExperimentWrapperProps_](#interfacesuseexperimentwrapperpropsmd) |
 
-**Returns:** [*UseExperimentWrapperResponse*](#interfacesuseexperimentwrapperresponsemd)
+**Returns:** [_UseExperimentWrapperResponse_](#interfacesuseexperimentwrapperresponsemd)
 
 An array containing wrapper components for each variant provided in this experiment.
 
