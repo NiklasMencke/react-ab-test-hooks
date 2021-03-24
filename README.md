@@ -29,7 +29,7 @@ See further examples for more options.
 ```tsx
 import React from 'react'
 
-import { useExperiment, useExperimentWrappers } from 'react-ab-testing'
+import { useExperiment, useExperimentWrappers } from 'react-ab-test-hooks'
 
 export const SimpleExample = () => {
   const { SelectedVariant } = useExperiment({
@@ -61,7 +61,7 @@ NOTE: Only the children of the winning variant wrapper are rendered!
 ```tsx
 import React from 'react'
 
-import { useExperiment, useExperimentWrappers } from 'react-ab-testing'
+import { useExperiment, useExperimentWrappers } from 'react-ab-test-hooks'
 
 export const WrapperExample = () => {
   const {
@@ -91,7 +91,7 @@ export const WrapperExample = () => {
 ```tsx
 import React from 'react'
 
-import { useExperiment, useExperimentWrappers } from 'react-ab-testing'
+import { useExperiment, useExperimentWrappers } from 'react-ab-test-hooks'
 
 export const CustomWeightsExample = () => {
   const { SelectedVariant } = useExperiment({
@@ -121,7 +121,7 @@ export const CustomWeightsExample = () => {
 ```tsx
 import React from 'react'
 
-import { useExperiment, useExperimentWrappers } from 'react-ab-testing'
+import { useExperiment, useExperimentWrappers } from 'react-ab-test-hooks'
 
 export const ErrorExample = () => {
   const { SelectedVariant, error } = useExperiment({
