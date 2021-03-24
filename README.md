@@ -30,7 +30,6 @@ See further examples for more options.
 import React from 'react'
 
 import { useExperiment, useExperimentWrappers } from 'react-ab-testing'
-import 'react-ab-testing/dist/index.css'
 
 export const SimpleExample = () => {
   const { SelectedVariant } = useExperiment({
@@ -63,7 +62,6 @@ NOTE: Only the children of the winning variant wrapper are rendered!
 import React from 'react'
 
 import { useExperiment, useExperimentWrappers } from 'react-ab-testing'
-import 'react-ab-testing/dist/index.css'
 
 export const WrapperExample = () => {
   const {
@@ -94,7 +92,6 @@ export const WrapperExample = () => {
 import React from 'react'
 
 import { useExperiment, useExperimentWrappers } from 'react-ab-testing'
-import 'react-ab-testing/dist/index.css'
 
 export const CustomWeightsExample = () => {
   const { SelectedVariant } = useExperiment({
@@ -125,7 +122,6 @@ export const CustomWeightsExample = () => {
 import React from 'react'
 
 import { useExperiment, useExperimentWrappers } from 'react-ab-testing'
-import 'react-ab-testing/dist/index.css'
 
 export const ErrorExample = () => {
   const { SelectedVariant, error } = useExperiment({
