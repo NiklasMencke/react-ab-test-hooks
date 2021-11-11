@@ -109,7 +109,7 @@ const useVariant = ({
   error: string | null;
 } => {
   const [resultIndex, setResultIndex] = useState<number>(
-    cacheResult ? (Number(getVariantFromStorage(id)) ? Number(getVariantFromStorage(id)) : -1) : -1,
+    cacheResult ? (Number(getVariantFromStorage(id)) !== NaN ? Number(getVariantFromStorage(id)) : -1) : -1,
   );
   const [error, setError] = useState<string | null>(null);
 
