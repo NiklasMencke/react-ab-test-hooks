@@ -75,6 +75,7 @@ const getWeightedRandomInt = (spec: any): number => {
       table.push(i);
     }
   }
+  console.log(table, Number(table[Math.floor(Math.random() * table.length)]))
   return Number(table[Math.floor(Math.random() * table.length)]);
 };
 
@@ -109,7 +110,13 @@ const useVariant = ({
   error: string | null;
 } => {
   const [resultIndex, setResultIndex] = useState<number>(
-    cacheResult ? (Number(getVariantFromStorage(id)) !== NaN ? Number(getVariantFromStorage(id)) : -1) : -1,
+    () => {
+      if (cacheResult) {
+        const savedVariant = getVariantFromStorage(id);
+        if (typeof savedVariant === "string") return Number(getVariantFromStorage(id));
+      }
+      return -1;
+    }
   );
   const [error, setError] = useState<string | null>(null);
 
